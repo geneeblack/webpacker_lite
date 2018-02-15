@@ -70,6 +70,15 @@ module WebpackerLite::Helper
   end
 
   private
+    # pull compute_asset_extname from rails 4 into local method for use in rails 3.2
+    ASSET_EXTENSIONS = { javascript: '.js', stylesheet: '.css' }
+
+    def compute_asset_extname(source, options = {})
+      return if options[:extname] == false
+      extname = options[:extname] || ASSET_EXTENSIONS[options[:type]]
+      extname if extname && File.extname(source) != extname
+    end
+  
     def asset_source(name, type)
       url = WebpackerLite::Configuration.base_url
       path = WebpackerLite::Manifest.lookup("#{name}#{compute_asset_extname(name, type: type)}")
